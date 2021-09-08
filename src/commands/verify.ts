@@ -11,7 +11,8 @@ export default {
         description: "Request or use a verification code to verify yourself as a human"
     },
     run: async (client: Client, ctx: Context) => {
-        const channels = (<ShardClient>client.client).channels;
+        // const channels = (<ShardClient>client.client).channels;
+        const channels = (<ShardClient>ctx.client).channels;
         const channel: ChannelGuildText = channels.get(ctx.channelId) || await client.rest.fetchChannel(ctx.channelId);
         if (!channels.has(ctx.channelId)) {
             channels.set(ctx.channelId, channel);
@@ -48,7 +49,7 @@ export default {
             ctx.editOrReply({
                 content: `<@${ctx.userId}>`,
                 file: {
-                    data: buff,
+                    value: buff,
                     filename: "captcha.jpeg"
                 }
             }).then(v => setTimeout(() => v.delete(), client.timeouts.captcha));
@@ -80,6 +81,7 @@ export default {
             ctx.editOrReply(`<@${ctx.userId}> ${client.messages.successfullyVerified}`)
                 .then(v => setTimeout(() => v.delete(), client.timeouts.successfullyVerified));
         } catch(e) {
+		//@ts-ignore
             ctx.editOrReply(`<@${ctx.userId}> ${client.messages.verifyError + e.message}`)
                 .then(v => setTimeout(() => v.delete(), client.timeouts.verifyError));
         }

@@ -1,7 +1,7 @@
 {
-    "token": "",
+    "token": "ODg1MTU0MzczMTQxOTUwNTI1.YTi6Pw.h0Tyy2SK4vrsefh61kC3JPNOqpc",
     "prefix": "!",
-    "noEOI": true,
+    "noEOI": false,
     "roleName": "verified",
     "boundTo": "verification",
     "messages": {
