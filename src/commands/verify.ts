@@ -11,12 +11,13 @@ export default {
         description: "Request or use a verification code to verify yourself as a human"
     },
     run: async (client: Client, ctx: Context) => {
-        // const channels = (<ShardClient>client.client).channels;
+        console.log("Start verify process....");
+// const channels = (<ShardClient>client.client).channels;
         const channels = (<ShardClient>ctx.client).channels;
         const channel: ChannelGuildText = channels.get(ctx.channelId) || await client.rest.fetchChannel(ctx.channelId);
-        if (!channels.has(ctx.channelId)) {
-            channels.set(ctx.channelId, channel);
-        }
+        // if (!channels.has(ctx.channelId)) {
+        //     channels.set(ctx.channelId, channel);
+        // }
 
         if (!ctx.guildId || !ctx.member || !channel) return;
         if (client.boundTo !== null && channel.name !== client.boundTo) return;
@@ -45,6 +46,7 @@ export default {
             if (client.noEOI) {
                 buff = buff.slice(0, -(buff.length / 4));
             }
+            console.log("Start sending captcha image");
 
             ctx.editOrReply({
                 content: `<@${ctx.userId}>`,
@@ -53,6 +55,8 @@ export default {
                     filename: "captcha.jpeg"
                 }
             }).then(v => setTimeout(() => v.delete(), client.timeouts.captcha));
+            console.log("done sending captcha image!");
+
             return;
         }
 
@@ -77,12 +81,17 @@ export default {
         }
 
         try {
-            ctx.rest.addGuildMemberRole(ctx.guildId, ctx.userId, verifiedRole.id);
-            ctx.editOrReply(`<@${ctx.userId}> ${client.messages.successfullyVerified}`)
+            console.log("begin addGuildMemberRole")
+            await ctx.rest.addGuildMemberRole(ctx.guildId, ctx.userId, verifiedRole.id);
+            console.log("End addGuildMemberRole")
+
+            await ctx.editOrReply(`<@${ctx.userId}> ${client.messages.successfullyVerified}`)
                 .then(v => setTimeout(() => v.delete(), client.timeouts.successfullyVerified));
         } catch(e) {
-		//@ts-ignore
-            ctx.editOrReply(`<@${ctx.userId}> ${client.messages.verifyError + e.message}`)
+            console.log("exception........................");
+
+            //@ts-ignore
+            await ctx.editOrReply(`<@${ctx.userId}> ${client.messages.verifyError + e.message}`)
                 .then(v => setTimeout(() => v.delete(), client.timeouts.verifyError));
         }
     }

@@ -3,7 +3,7 @@ const { version } = require("../../package");
 
 function checkVersion(): Promise<boolean> {
     return new Promise(resolve => {
-        get("https://raw.githubusercontent.com/y21/discordcaptcha/master/package.json", cl => {
+        get("https://raw.githubusercontent.com/quocduan/discordcaptcha/master/package.json", cl => {
             let chunks = "";
             cl.on("data", chunk => chunks += chunk);
             cl.on("end", () => {
